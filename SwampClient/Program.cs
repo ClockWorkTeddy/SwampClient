@@ -2,7 +2,7 @@
 using System.Text;
 
 using TcpClient tcpClient = new TcpClient();
-await tcpClient.ConnectAsync("192.168.31.243", 8888);
+await tcpClient.ConnectAsync("", 8888);
 
 var stream = tcpClient.GetStream();
 var response = await GetServerResponse();
