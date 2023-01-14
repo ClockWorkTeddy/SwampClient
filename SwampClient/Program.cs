@@ -1,22 +1,42 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-var stream = await GetStream();
-var response = await GetServerResponse();
-
-DisplayResponce(response);
-
-while (true)
+string exMessage = "";
+NetworkStream stream = null;
+try
 {
-    Console.WriteLine("Press Enter for proceed. Send \"q\" for the quit.");
-    var responce = Console.ReadLine();
-    await stream.WriteAsync(Encoding.UTF8.GetBytes($"{responce}#"));
+    stream = await GetStream();
+    var response = await GetServerResponse();
+    bool firstTime = true;
+
+    DisplayResponce(response);
+
+    while (true)
+    {
+        if (!firstTime)
+            Console.WriteLine("Press Enter for proceed. Send \"q\" for the quit.");
+        else
+            firstTime = false;
+
+        var responce = Console.ReadLine();
+        await stream.WriteAsync(Encoding.UTF8.GetBytes($"{responce}#"));
+    }
+}
+catch (Exception ex)
+{
+    exMessage = ex.Message;
+}
+finally
+{
+    StreamWriter sw = new StreamWriter("log.txt");
+    sw.Write(exMessage);
+    sw.Close();
 }
 
 async Task<NetworkStream> GetStream()
 {
     TcpClient tcpClient = new TcpClient();
-    await tcpClient.ConnectAsync("192.168.0.53", 8888);
+    await tcpClient.ConnectAsync("192.168.0.53", 8887);
 
     return tcpClient.GetStream();
 }
